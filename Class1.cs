@@ -33,6 +33,7 @@ namespace Always3114
         {
             var EligiblePlayers = Player.GetPlayers().ToList();
             var playersToRemove = new List<Player>();
+            bool SkeletonAlready = false;
 
             if (EligiblePlayers.Count >= PluginConfig.MinimumNumberOfPlayers)
             {
@@ -40,9 +41,9 @@ namespace Always3114
                 {
                     if (player.Role == PlayerRoles.RoleTypeId.Scp3114)
                     {
-                        EligiblePlayers.Clear();
-                        Log.Debug("3114 spawn; clear players");
-                        return true;
+                        Log.Info("An SCP-3114 was already selected by the game");
+                        SkeletonAlready = true;
+                        break;
                     }
                     if (!PluginConfig.AllowScps && player.IsSCP)
                     {
@@ -51,6 +52,12 @@ namespace Always3114
                     {
                         playersToRemove.Add(player);
                     }
+                }
+
+                // cancel the event if there is already a skeleton
+                if (SkeletonAlready)
+                {
+                    return false;
                 }
 
                 // Remove players after figuring out who is not allowed based on the config.
@@ -62,19 +69,21 @@ namespace Always3114
                 // get a random list element (player), 3 times by default
                 for (int attempt = 0; attempt < PluginConfig.MaxAttempts; attempt++)
                 {
-                    // edge case if theres only one player on the server and they're not eligible due to being an scp
                     if (EligiblePlayers.Count > 0)
                     {
                         int randomNumber = randomGen.Next(EligiblePlayers.Count);
                         Player randomPlayer = EligiblePlayers[randomNumber];
 
-                        // Check that the player hasn't left
+                        // Check that the player isnt null (left game or something idk) :3
                         if (randomPlayer != null)
                         {
                             Log.Info($"{randomPlayer.LogName} has been chosen to become SCP-3114");
                             randomPlayer.Role = PlayerRoles.RoleTypeId.Scp3114;
                             return true;
                         }
+                    } else
+                    {
+                        Log.Info("No SCP-3114 could be selected because there are no eligible players.");
                     }
                 }
             }

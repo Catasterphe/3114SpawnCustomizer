@@ -71,6 +71,7 @@ namespace Always3114
                         // Check that the player hasn't left
                         if (randomPlayer != null)
                         {
+                            Log.Info($"{randomPlayer.LogName} has been chosen to become SCP-3114");
                             randomPlayer.Role = PlayerRoles.RoleTypeId.Scp3114;
                             return true;
                         }

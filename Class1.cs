@@ -7,6 +7,18 @@ using PluginAPI.Core.Attributes;
 using PluginAPI.Core;
 using PluginAPI.Events;
 using PluginAPI.Roles;
+using HarmonyLib;
+using PlayerRoles.PlayableScps.Scp3114;
+using PlayerRoles;
+using Unity;
+using Mirror;
+using PlayerRoles.PlayableScps.Scp049;
+using PlayerRoles.PlayableScps.Scp173;
+using PlayerRoles.PlayableScps.Scp079;
+using PlayerRoles.PlayableScps.Scp096;
+using PlayerRoles.PlayableScps.Scp939;
+using PlayerRoles.PlayableScps.Scp106;
+using Always3114;
 
 namespace Always3114
 {
@@ -14,8 +26,7 @@ namespace Always3114
     {
         public static Plugin Singleton { get; private set; }
         public const string Version = "0.0.1";
-        static Random randomGen = new Random();
-        [PluginConfig] public Config PluginConfig;
+        [PluginAPI.Core.Attributes.PluginConfig] public PluginConfig PluginConfig;
 
         [PluginEntryPoint("Always Spawn 3114", Version, "Spawns a player as the skeleton if there is not one already selected.", "Aster")]
         public void LoadPlugin()
@@ -24,70 +35,59 @@ namespace Always3114
             EventManager.RegisterEvents(this);
             var handler = PluginHandler.Get(this);
             handler.LoadConfig(this, nameof(PluginConfig));
+            Harmony harmony = new Harmony("aster.scpsl.spawn3114");
+            harmony.PatchAll();
 
             Log.Info($"Plugin {handler.PluginName} loaded.");
         }
+    }
+}
 
-        [PluginEvent]
-        bool RoundStart(RoundStartEvent ev)
+[HarmonyPatch(typeof(Scp3114Spawner), nameof(Scp3114Spawner.OnPlayersSpawned))]
+public class Patch
+{
+    static bool Prefix()
+    {
+        if (!NetworkServer.active)
         {
-            var EligiblePlayers = Player.GetPlayers().ToList();
-            var playersToRemove = new List<Player>();
-            bool SkeletonAlready = false;
-
-            if (EligiblePlayers.Count >= PluginConfig.MinimumNumberOfPlayers)
-            {
-                foreach (var player in EligiblePlayers)
-                {
-                    if (player.Role == PlayerRoles.RoleTypeId.Scp3114)
-                    {
-                        Log.Info("An SCP-3114 was already selected by the game");
-                        SkeletonAlready = true;
-                        break;
-                    }
-                    if (!PluginConfig.AllowScps && player.IsSCP)
-                    {
-                        playersToRemove.Add(player);
-                    } else if (PluginConfig.OnlyScps && player.IsHuman)
-                    {
-                        playersToRemove.Add(player);
-                    }
-                }
-
-                // cancel the event if there is already a skeleton
-                if (SkeletonAlready)
-                {
-                    return false;
-                }
-
-                // Remove players after figuring out who is not allowed based on the config.
-                foreach (var player in playersToRemove)
-                {
-                    EligiblePlayers.Remove(player);
-                }
-
-                // get a random list element (player), 3 times by default
-                for (int attempt = 0; attempt < PluginConfig.MaxAttempts; attempt++)
-                {
-                    if (EligiblePlayers.Count > 0)
-                    {
-                        int randomNumber = randomGen.Next(EligiblePlayers.Count);
-                        Player randomPlayer = EligiblePlayers[randomNumber];
-
-                        // Check that the player isnt null (left game or something idk) :3
-                        if (randomPlayer != null)
-                        {
-                            Log.Info($"{randomPlayer.LogName} has been chosen to become SCP-3114");
-                            randomPlayer.Role = PlayerRoles.RoleTypeId.Scp3114;
-                            return true;
-                        }
-                    } else
-                    {
-                        Log.Info("No SCP-3114 could be selected because there are no eligible players.");
-                    }
-                }
-            }
             return false;
         }
+
+        Scp3114Spawner._ragdollsSpawned = false;
+        Scp3114Spawner.SpawnCandidates.Clear();
+        if (!Plugin.Singleton.PluginConfig.AllowScps)
+        {
+            PlayerRolesUtils.ForEachRole<HumanRole>(Scp3114Spawner.SpawnCandidates.Add);
+        }
+        else if (Plugin.Singleton.PluginConfig.AllowScps && !Plugin.Singleton.PluginConfig.OnlyScps)
+        {
+            PlayerRolesUtils.ForEachRole<HumanRole>(Scp3114Spawner.SpawnCandidates.Add);
+            PlayerRolesUtils.ForEachRole<Scp049Role>(Scp3114Spawner.SpawnCandidates.Add);
+            PlayerRolesUtils.ForEachRole<Scp173Role>(Scp3114Spawner.SpawnCandidates.Add);
+            PlayerRolesUtils.ForEachRole<Scp079Role>(Scp3114Spawner.SpawnCandidates.Add);
+            PlayerRolesUtils.ForEachRole<Scp096Role>(Scp3114Spawner.SpawnCandidates.Add);
+            PlayerRolesUtils.ForEachRole<Scp106Role>(Scp3114Spawner.SpawnCandidates.Add);
+            PlayerRolesUtils.ForEachRole<Scp939Role>(Scp3114Spawner.SpawnCandidates.Add);
+        }
+        else if (Plugin.Singleton.PluginConfig.OnlyScps && Plugin.Singleton.PluginConfig.AllowScps)
+        {
+            PlayerRolesUtils.ForEachRole<Scp049Role>(Scp3114Spawner.SpawnCandidates.Add);
+            PlayerRolesUtils.ForEachRole<Scp173Role>(Scp3114Spawner.SpawnCandidates.Add);
+            PlayerRolesUtils.ForEachRole<Scp079Role>(Scp3114Spawner.SpawnCandidates.Add);
+            PlayerRolesUtils.ForEachRole<Scp096Role>(Scp3114Spawner.SpawnCandidates.Add);
+            PlayerRolesUtils.ForEachRole<Scp106Role>(Scp3114Spawner.SpawnCandidates.Add);
+            PlayerRolesUtils.ForEachRole<Scp939Role>(Scp3114Spawner.SpawnCandidates.Add);
+        } else
+        {
+            // couldn't figure out spawn candidates from config file, just go with default humans.
+            PlayerRolesUtils.ForEachRole<HumanRole>(Scp3114Spawner.SpawnCandidates.Add);
+        }
+
+        if (Scp3114Spawner.SpawnCandidates.Count >= Plugin.Singleton.PluginConfig.MinimumNumberOfPlayers)
+        {
+            Scp3114Spawner.SpawnCandidates.RandomItem().roleManager.ServerSetRole(RoleTypeId.Scp3114, RoleChangeReason.RoundStart);
+        }
+
+        return false;
     }
 }

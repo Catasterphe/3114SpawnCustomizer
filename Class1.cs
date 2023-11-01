@@ -59,18 +59,12 @@ public class Patch
         {
             PlayerRolesUtils.ForEachRole<HumanRole>(Scp3114Spawner.SpawnCandidates.Add);
         }
-        else if (Plugin.Singleton.PluginConfig.AllowScps && !Plugin.Singleton.PluginConfig.OnlyScps)
+        else if (Plugin.Singleton.PluginConfig.AllowScps)
         {
-            PlayerRolesUtils.ForEachRole<HumanRole>(Scp3114Spawner.SpawnCandidates.Add);
-            PlayerRolesUtils.ForEachRole<Scp049Role>(Scp3114Spawner.SpawnCandidates.Add);
-            PlayerRolesUtils.ForEachRole<Scp173Role>(Scp3114Spawner.SpawnCandidates.Add);
-            PlayerRolesUtils.ForEachRole<Scp079Role>(Scp3114Spawner.SpawnCandidates.Add);
-            PlayerRolesUtils.ForEachRole<Scp096Role>(Scp3114Spawner.SpawnCandidates.Add);
-            PlayerRolesUtils.ForEachRole<Scp106Role>(Scp3114Spawner.SpawnCandidates.Add);
-            PlayerRolesUtils.ForEachRole<Scp939Role>(Scp3114Spawner.SpawnCandidates.Add);
-        }
-        else if (Plugin.Singleton.PluginConfig.OnlyScps && Plugin.Singleton.PluginConfig.AllowScps)
-        {
+            if (!Plugin.Singleton.PluginConfig.OnlyScps)
+            {
+                PlayerRolesUtils.ForEachRole<HumanRole>(Scp3114Spawner.SpawnCandidates.Add);
+            }
             PlayerRolesUtils.ForEachRole<Scp049Role>(Scp3114Spawner.SpawnCandidates.Add);
             PlayerRolesUtils.ForEachRole<Scp173Role>(Scp3114Spawner.SpawnCandidates.Add);
             PlayerRolesUtils.ForEachRole<Scp079Role>(Scp3114Spawner.SpawnCandidates.Add);
@@ -78,8 +72,8 @@ public class Patch
             PlayerRolesUtils.ForEachRole<Scp106Role>(Scp3114Spawner.SpawnCandidates.Add);
             PlayerRolesUtils.ForEachRole<Scp939Role>(Scp3114Spawner.SpawnCandidates.Add);
         } else
-        {
-            // couldn't figure out spawn candidates from config file, just go with default humans.
+        {   
+            // fallback to the normal code that makes it so only humans can become 3114
             PlayerRolesUtils.ForEachRole<HumanRole>(Scp3114Spawner.SpawnCandidates.Add);
         }
 

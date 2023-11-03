@@ -1,4 +1,4 @@
-# 3114 Spawn Customizer
+# 3114 Spawn Customizer (originally Always3114)
 
 This is my first plugin made with Northwood PluginAPI as well as 0harmony.dll - used for controlling the spawning of SCP 3114 in your game. Below are the available settings and their descriptions:
 

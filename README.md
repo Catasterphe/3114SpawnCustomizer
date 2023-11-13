@@ -1,27 +1,15 @@
 # 3114 Spawn Customizer (originally Always3114)
 
-This is my first plugin made with Northwood PluginAPI as well as 0harmony.dll - used for controlling the spawning of SCP 3114 in your game. Below are the available settings and their descriptions:
+This is my first plugin made with Northwood PluginAPI as well as 0harmony.dll - used for controlling the spawning of SCP 3114 in your game. Below are the available settings and their descriptions:\
 
-## Minimum Number of Players
-
-- **Setting Name:** MinimumNumberOfPlayers
-- **Description:** This setting defines the minimum number of players that must be in the game for SCP 3114 to spawn every round.
-- **Default Value:** 6
-
-## Allow SCPs to Become 3114
-
-- **Setting Name:** AllowScps
-- **Description:** When set to `true`, this setting allows already selected SCPs to spawn as 3114 instead of just humans.
-- **Default Value:** true
-
-## Only Allow SCPs to Become 3114
-
-- **Setting Name:** OnlyScps
-- **Description:** When set to `true`, this setting restricts the ability to become SCP 3114 exclusively to (already selected) SCPs, the SCP team will lose one normal SCP for the event exclusive one.
-- **Default Value:** false
-
-## Chance to Spawn
-
-- **Setting Name:** ChanceToSpawn
-- **Description:** This setting represents the chance for SCP 3114 to spawn. It ranges between 0, being 0% and 1 being 100% chance.
-- **Default Value:** 1.0
+# Default Config Values
+```yaml
+# The Minimum number of players that have to be in the game for 3114 to spawn every round.
+minimum_number_of_players: 6
+# If true, Allow players already selected to be SCP's to spawn as 3114 instead.
+allow_scps: true;
+# if true, only lets players already selected to be scps to spawn as 3114.
+only_scps: false;
+# The chance for scp 3114 to spawn, 0 = 0%, 1 = 100%
+chance_to_spawn: 1
+```

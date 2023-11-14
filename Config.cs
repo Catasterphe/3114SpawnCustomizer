@@ -10,7 +10,7 @@ namespace Always3114
     {
         // The Minimum number of players that have to be in the game for 3114 to spawn every round.
         public int MinimumNumberOfPlayers { get; set; } = 6;
-        // Allow SCP's to become 3114?
+        // Allow SCP's to becaaaome 3114?
         public bool AllowScps { get; set; } = true;
         // ONLY allow scsp to become 3114
         public bool OnlyScps { get; set; } = false;

@@ -25,10 +25,10 @@ namespace Always3114
     public class Plugin
     {
         public static Plugin Singleton { get; private set; }
-        public const string Version = "0.1";
+        public const string Version = "13.3.1";
         [PluginConfig] public Config Config;
 
-        [PluginEntryPoint("Always Spawn 3114", Version, "Spawns a player as the skeleton if there is not one already selected.", "Aster")]
+        [PluginEntryPoint("3114 Spawn Customizer", Version, "Spawns a player as the skeleton if there is not one already selected.", "Aster")]
         public void LoadPlugin()
         {
             Singleton = this;

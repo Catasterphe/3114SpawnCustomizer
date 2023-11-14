@@ -4,7 +4,7 @@ This is my first plugin made with Northwood PluginAPI as well as 0harmony.dll - 
 
 # Default Config Values
 ```yaml
-# The Minimum number of players that have to be in the game for 3114 to spawn every round.
+# The Minimum number of players that have to be in the game for 3114 to spawn.
 minimum_number_of_players: 6
 # If true, Allow players already selected to be SCP's to spawn as 3114 instead.
 allow_scps: true;
